@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filmes</title>
+</head>
+<body onload="listar()">
+    
+    <form id="form">
+        <input type="text" id="nome" placeholder="Nome do filme" required>
+        <input type="text" id="categoria" placeholder="Categoria" required>
+        <input type="text" id="ano" placeholder="Ano de lançamento" required>
+
+        <button type="button" onclick="cadastrar()" id="btnCadastrar">Cadastrar</button>
+        <button type="button" onclick="deletar()" id="btnRemover">Remover</button>
+
+        <table>
+            <caption>Filmes</caption>
+            <thead>
+                <th>
+                    Id
+                </th>
+                <th>
+                    Nome
+                </th>
+                <th>
+                    Categoria
+                </th>
+                <th>
+                    Ano Lançamento
+                </th>
+            </thead>
+            <tbody id="tabela-lista-corpo"></tbody>
+        </table>
+    </form>
+
+</body>
+<script>
+
+
+    let url = 'https://5f888905a8a2b5001641eded.mockapi.io/api/TiposDeFilmes';
+    
+    let nome = document.querySelector('#nome');
+    let categoria = document.querySelector('#categoria');
+    let lancamento = document.querySelector('#ano');
+
+
+
+    let categorias = [];
+
+    function listar(){
+
+       let xhrGet = new XMLHttpRequest();
+       xhrGet.onload = listarSucesso;
+       xhrGet.onerror = listarErro;
+       xhrGet.open('GET', url);
+       xhrGet.send();
+
+    }
+
+    function listarSucesso(){
+
+        console.log('Sucesso!');
+        const data = this.responseText;
+        categorias = JSON.parse(data)
+        console.log(categorias);
+    }
+
+    function listarErro(err){
+        console.error(err);
+    }
+
+    function cadastrar(){
+        event.preventDefault();
+
+        let xhrPost = new XMLHttpRequest();
+        xhrPost.onload = cadastroSucesso;
+        xhrPost.onerror = cadastroErro;
+
+        //Envia os dados para API
+        xhrPost.open('POST' , url);
+        //Define o tipo de conteúdo para o header
+        xhrPost.setRequestHeader('content-type' , 'application/json');
+
+                let params = {
+                name : categoria.value
+                }
+        xhrPost.send(JSON.stringify(params));
+    }
+
+        function cadastroSucesso(){
+
+        console.log('Cadastrado com sucesso!');
+        const data = this.responseText;
+        cadastros = JSON.parse(data)
+        console.log(cadastros);
+
+        listar();
+        }
+
+        function cadastroErro(err){
+
+        console.error(err);
+        }
+
+
+        function deletar(){
+            let xhrDelete = new XMLHttpRequest();
+            xhrDelete.onload = deletaSucesso;
+            xhrDelete.onerror = deletaErro;
+
+            xhrDelete.open('DELETE' , url + '/' + categorias.value);
+            xhrDelete.send();
+        }
+
+        function deletaSucesso(){
+
+        console.log('Deletado com sucesso!');
+        const data = this.responseText;
+        deletar = JSON.parse(data)
+        console.log(deletar);
+
+        listar();
+
+        }
+
+        function deletaErro(err){
+        console.error(err);
+        }
+
+    
+    
+    
+    
+
+</script>
+</html>
